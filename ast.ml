@@ -1,6 +1,20 @@
+type const = 
+  | Int of int
+  | Float of int * int (* nombre . nombre*)
+  | IntExp of int * bool * int(*nombre e +- nombre rien = + = false*) 
+  | FloatExp of int * int * bool * int (*nombre . nombre e +- nombre*)
+
+type baseConst =
+  | Int of int * string
+  | Float of int * string * string
+  | IntExp of int * string * bool * int
+  | FloatExp of int * string * string * bool * int
+
 type expression = 
   | Id of string
-  | Const of float
+  | QualId of string list
+  | Const of const
+  | BaseConst of baseConst
   | String of string
   | Negate of expression
   | Abs of expression
@@ -71,4 +85,3 @@ type declaration =
 type file = 
   | DefProc of string * (string list * mode option * string ) list * declaration list * instruction list
   | DefFun of string * (string list * mode option * string ) list * string * declaration list * instruction list
-

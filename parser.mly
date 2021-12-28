@@ -3,7 +3,7 @@
 
     (* TODO *)
 %}
-%token EOL MINUS PLUS ABS NOT MULT DIV POW EQUAL
+%token MINUS PLUS ABS NOT MULT DIV POW EQUAL
 %token N_EQUAL LESS_T GREATER_T LESS GREATER MOD
 %token REM AND OR XOR AND_THEN OR_ELSE L_PAR R_PAR
 %token COMMA SEMICOLON COLON L_ID R_ID NULL ASS
@@ -12,6 +12,7 @@
 %token ARROW OTHERS END_CASE PIPE GOTO EXIT RETURN
 %token RANGE CONSTANT TYPE IS_RANGE SUBTYPE RENAMES
 %token PROCEDURE IN OUT IN_OUT FUNCTION BEGIN END
+%token DOT
 %token <int> Int
 %token <int*int> Float
 %token <int*bool*int> IntExp
@@ -35,7 +36,7 @@
 %start s
 %type<Ast.file> s
 %%
-s: top_def EOL {$1}
+s: top_def {$1}
 ;
 e: Int {Const(Int($1))}
     | Float {let (a,b) = $1 in Const(Float(a, b))}
@@ -76,7 +77,7 @@ e: Int {Const(Int($1))}
 string: String string {$1 ^ "\"" ^ $2}
     | String {$1}
 ;
-qual_id: QualId qual_id {$1::$2}
+qual_id: Id DOT qual_id {$1::$3}
     | Id {[$1]}
 ;
 e_sep: e COMMA e_sep {$1::$3}
@@ -113,8 +114,10 @@ i_: NULL SEMICOLON {Null}
     | IF e THEN i_seq else_if ELSE i_seq END_IF SEMICOLON {If($2, $4, $5, $7)}
     | CASE e IS when_seq END_CASE SEMICOLON {Case($2, $4)}
     | GOTO Id SEMICOLON {Goto($2)}
-    | EXIT SEMICOLON {Exit(None)}
-    | EXIT Id WHEN e SEMICOLON {Exit(Some($2, $4))}
+    | EXIT SEMICOLON {Exit(None, None)}
+    | EXIT Id SEMICOLON {Exit(Some($2), None)}
+    | EXIT WHEN e SEMICOLON {Exit(None, Some($3))}
+    | EXIT Id WHEN e SEMICOLON {Exit(Some($2), Some($4))}
     | RETURN SEMICOLON {ProcReturn}
     | RETURN e SEMICOLON {ProcFun($2)}
 ;

@@ -66,7 +66,7 @@ type instruction_ =
   | If of expression * (string list * instruction_) list * (expression * (string list * instruction_) list) list * (string list * instruction_) list
   | Case of expression * (choice list * (string list * instruction_) list) list
   | Goto of string
-  | Exit of (string * expression) option
+  | Exit of string option * expression option
   | ProcReturn
   | ProcFun of expression
 

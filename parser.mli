@@ -1,5 +1,4 @@
 type token =
-  | EOL
   | MINUS
   | PLUS
   | ABS
@@ -63,6 +62,7 @@ type token =
   | FUNCTION
   | BEGIN
   | END
+  | DOT
   | Int of (int)
   | Float of (int*int)
   | IntExp of (int*bool*int)

@@ -31,6 +31,38 @@ type token =
   | ASS
   | LOOP
   | END_LOOP
+  | WHILE
+  | FOR
+  | IN
+  | SEQUENCE
+  | REVERSE
+  | IF
+  | THEN
+  | ELSE
+  | ELSIF
+  | END_IF
+  | CASE
+  | IS
+  | WHEN
+  | ARROW
+  | OTHERS
+  | END_CASE
+  | PIPE
+  | GOTO
+  | EXIT
+  | RETURN
+  | RANGE
+  | CONSTANT
+  | TYPE
+  | IS_RANGE
+  | SUBTYPE
+  | RENAMES
+  | PROCEDURE
+  | OUT
+  | IN_OUT
+  | FUNCTION
+  | BEGIN
+  | END
   | Int of (int)
   | Float of (int*int)
   | IntExp of (int*bool*int)
@@ -46,4 +78,4 @@ type token =
   | QualId of (string)
 
 val s :
-  (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> Ast.expression
+  (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> Ast.file

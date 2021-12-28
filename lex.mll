@@ -6,8 +6,14 @@
     let parse_sign s = true;;
     let normalize = String.lowercase_ascii;;
 }
+let whitespace = [' ''\t']+
+let int = ['0'-'9']('_'?['0'-'9'])*
+let base = ['2'-'9']|'1''_'?['0'-'6']
+let hex = ['0'-'9''a'-'f''A'-'F']
+let sign = ['+''-']?
+let id = ['a'-'z''A'-'Z']('_'?['a'-'z''A'-'Z''0'-'9'])*
 rule decoupe = parse
-    | [' ''\t'] {decoupe lexbuf}
+    | whitespace {decoupe lexbuf}
     | "--"[^'\n']*'\n' {decoupe lexbuf}
     | '\n' {EOL}
     | "abs" {ABS}
@@ -28,8 +34,8 @@ rule decoupe = parse
     | "and" {AND}
     | "or" {OR}
     | "xor" {XOR}
-    | "and"[' ''\t']+"then" {AND_THEN}
-    | "or"[' ''\t']+"else" {OR_ELSE}
+    | "and"whitespace"then" {AND_THEN}
+    | "or"whitespace"else" {OR_ELSE}
     | '(' {L_PAR}
     | ')' {R_PAR}
     | ',' {COMMA}
@@ -40,17 +46,50 @@ rule decoupe = parse
     | ":=" {ASS}
     | "null" {NULL}
     | "loop" {LOOP}
-    | "end"[' ''\t']+"loop" {END_LOOP}
-    | ['0'-'9']('_'?['0'-'9'])* as n {Int(parse_int n)}
-    | (['0'-'9']('_'?['0'-'9'])* as n)'.'(['0'-'9']('_'?['0'-'9'])* as d) {Float(parse_int n, parse_int d)}
-    | (['0'-'9']('_'?['0'-'9'])* as n)['e''E'](['+''-']? as s)(['0'-'9']('_'?['0'-'9'])* as e) {IntExp(parse_int n, parse_sign s, parse_int e)}
-    | (['0'-'9']('_'?['0'-'9'])* as n)'.'(['0'-'9']('_'?['0'-'9'])* as d)['e''E'](['+''-']? as s)(['0'-'9']('_'?['0'-'9'])* as e) {FloatExp(parse_int n, parse_int d, parse_sign s, parse_int e)}
-    | (['2'-'9']|'1''_'?['0'-'6'] as b)'#'(['0'-'9''a'-'f''A'-'F']('_'?['0'-'9''a'-'f''A'-'F'])* as h)'#'  {BaseInt(parse_int b, h)}
-    | (['2'-'9']|'1''_'?['0'-'6'] as b)'#'(['0'-'9''a'-'f''A'-'F']('_'?['0'-'9''a'-'f''A'-'F'])* as h)'.'(['0'-'9''a'-'f''A'-'F']('_'?['0'-'9''a'-'f''A'-'F'])* as d)'#' {BaseFloat(parse_int b, h, d)}
-    | (['2'-'9']|'1''_'?['0'-'6'] as b)'#'(['0'-'9''a'-'f''A'-'F']('_'?['0'-'9''a'-'f''A'-'F'])* as h)'#'['e''E'](['+''-']? as s)(['0'-'9']('_'?['0'-'9'])* as e) {BaseIntExp(parse_int b, h, parse_sign s, parse_int e)}
-    | (['2'-'9']|'1''_'?['0'-'6'] as b)'#'(['0'-'9''a'-'f''A'-'F']('_'?['0'-'9''a'-'f''A'-'F'])* as h)'.'(['0'-'9''a'-'f''A'-'F']('_'?['0'-'9''a'-'f''A'-'F'])* as d)'#'['e''E'](['+''-']? as s)(['0'-'9']('_'?['0'-'9'])* as e) {BaseFloatExp(parse_int b, h, d, parse_sign s, parse_int e)}
-    | ['a'-'z''A'-'Z']('_'?['a'-'z''A'-'Z''0'-'9'])* as s {Id(normalize s)}
-    | (['a'-'z''A'-'Z']('_'?['a'-'z''A'-'Z''0'-'9'])* as s)'.' {QualId(normalize s)}
+    | "end"whitespace"loop" {END_LOOP} (* factoriser end ? *)
+    | "while" {WHILE}
+    | "for" {FOR}
+    | "in" {IN}
+    | ".." {SEQUENCE}
+    | "reverse" {REVERSE}
+    | "if" {IF}
+    | "then" {THEN}
+    | "else" {ELSE}
+    | "elsif" {ELSIF}
+    | "end"whitespace"if" {END_IF}
+    | "case" {CASE}
+    | "is" {IS}
+    | "when" {WHEN}
+    | "=>" {ARROW}
+    | "others" {OTHERS}
+    | "end"whitespace"case" {END_CASE}
+    | "|" {PIPE}
+    | "goto" {GOTO}
+    | "exit" {EXIT}
+    | "return" {RETURN}
+    | "range" {RANGE}
+    | "constant" {CONSTANT}
+    | "type" {TYPE}
+    | "is"whitespace"range" {IS_RANGE}
+    | "subtype" {SUBTYPE}
+    | "renames" {RENAMES}
+    | "procedure" {PROCEDURE}
+    | "in" {IN}
+    | "out" {OUT}
+    | "in"whitespace"out" {IN_OUT}
+    | "function" {FUNCTION}
+    | "begin" {BEGIN}
+    | "end" {END}
+    | int as n {Int(parse_int n)}
+    | (int as n)'.'(int as d) {Float(parse_int n, parse_int d)}
+    | (int as n)['e''E'](sign as s)(int as e) {IntExp(parse_int n, parse_sign s, parse_int e)}
+    | (int as n)'.'(int as d)['e''E'](sign as s)(int as e) {FloatExp(parse_int n, parse_int d, parse_sign s, parse_int e)}
+    | (base as b)'#'(hex('_'?hex)* as h)'#'  {BaseInt(parse_int b, h)}
+    | (base as b)'#'(hex('_'?hex)* as h)'.'(hex('_'?hex)* as d)'#' {BaseFloat(parse_int b, h, d)}
+    | (base as b)'#'(hex('_'?hex)* as h)'#'['e''E'](sign as s)(int as e) {BaseIntExp(parse_int b, h, parse_sign s, parse_int e)}
+    | (base as b)'#'(hex('_'?hex)* as h)'.'(hex('_'?hex)* as d)'#'['e''E'](sign as s)(int as e) {BaseFloatExp(parse_int b, h, d, parse_sign s, parse_int e)}
+    | id as s {Id(normalize s)}
+    | (id as s)'.' {QualId(normalize s)}
     | '"'([^'"''\n']* as s)'"' {String(s)}
 {
 

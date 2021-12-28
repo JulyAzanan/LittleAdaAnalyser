@@ -60,28 +60,28 @@ type instruction_ =
   | Null
   | Ass of string list * expression
   | Proc of string list  * expression list
-  | Loop of string * instruction_ list
-  | While of string * expression * instruction_ list
-  | For of string * string * bool * iter * instruction_ list 
-  | If of expression * instruction_ list * (expression * instruction_ list) list * instruction_ list
-  | Case of expression * (choice * instruction_ list) list
-  | Goto of string * string
+  | Loop of string option * (string list * instruction_) list
+  | While of string option * expression * (string list * instruction_) list
+  | For of string option * string * bool * iter * (string list * instruction_) list 
+  | If of expression * (string list * instruction_) list * (expression * (string list * instruction_) list) list * (string list * instruction_) list
+  | Case of expression * (choice list * (string list * instruction_) list) list
+  | Goto of string
   | Exit of (string * expression) option
   | ProcReturn
   | ProcFun of expression
 
-type instruction = Instr of string list * instruction_
+type instruction = string list * instruction_
 
 type declaration =
   | Obj of string list * bool * type_ option * expression option
   | Type of type_
   | SubType of string * type_
-  | Rename of string list * type_ * string
-  | Proc of string * (string list * mode option * string ) list
-  | Fun of string * (string list * mode option * string ) list * string
-  | DefProc of string * (string list * mode option * string ) list * declaration list * instruction list
-  | DefFun of string * (string list * mode option * string ) list * string * declaration list * instruction list
+  | Renames of string list * type_ * string list
+  | Proc of string * (string list * mode option * string list ) list
+  | Fun of string * (string list * mode option * string list ) list * string list
+  | DefProc of string * (string list * mode option * string list) list * declaration list * instruction list * string option
+  | DefFun of string * (string list * mode option * string list) list * string list * declaration list * instruction list * string option
 
 type file = 
-  | DefProc of string * (string list * mode option * string ) list * declaration list * instruction list
-  | DefFun of string * (string list * mode option * string ) list * string * declaration list * instruction list
+  | TopDefProc of string * (string list * mode option * string list ) list * declaration list * instruction list * string option
+  | TopDefFun of string * (string list * mode option * string list) list * string list * declaration list * instruction list * string option

@@ -8,7 +8,8 @@ let _ =
     let _ = match a with 
       |String(s) -> print_string s
       |Const(Int(n)) -> print_int n
-      |_ -> print_string "nique"
+      |Const(Float(n, d)) -> Format.printf "%i.%i@." n d
+      |_ -> print_string "nique" 
   in
     print_newline ()
   done

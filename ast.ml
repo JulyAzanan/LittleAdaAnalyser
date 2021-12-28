@@ -23,7 +23,7 @@ type expression =
   | Minus of expression * expression
   | Mult of expression * expression
   | Div of expression * expression
-  | Exp of expression * expression
+  | Pow of expression * expression
   | Equal of expression * expression
   | NEqual of expression * expression
   | LessT of expression * expression
@@ -37,7 +37,7 @@ type expression =
   | Xor of expression * expression
   | AndThen of expression * expression
   | OrElse of expression * expression
-  | Fun of expression list
+  | Fun of string list * expression list
   | Parent of expression
 
 type type_ = string * (expression * expression) option
@@ -58,8 +58,8 @@ type choice =
 
 type instruction_ = 
   | Null
-  | Aff of string * expression
-  | Proc of string * expression list
+  | Ass of string list * expression
+  | Proc of string list  * expression list
   | Loop of string * instruction_ list
   | While of string * expression * instruction_ list
   | For of string * string * bool * iter * instruction_ list 
@@ -70,7 +70,7 @@ type instruction_ =
   | ProcReturn
   | ProcFun of expression
 
-type instruction = instruction_ list
+type instruction = Instr of string list * instruction_
 
 type declaration =
   | Obj of string list * bool * type_ option * expression option

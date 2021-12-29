@@ -15,3 +15,6 @@ test_ok:
 
 test_ko:
 	for file in ./projet_little_Ada/KO/*; do echo "$$file"; cat "$$file" | ./test; done
+
+test_affect:
+	for file in ./projet_little_Ada/KO/AffMode.ada ./projet_little_Ada/KO/AffIn.ada ./projet_little_Ada/KO/AffConst.ada ./projet_little_Ada/OK/*; do echo "$$file"; cat "$$file" | ./test_check_affect; done

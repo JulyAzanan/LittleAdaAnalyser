@@ -83,5 +83,5 @@ type declaration =
   | DefFun of string * (string list * mode option * string list) list * string list * declaration list * instruction list * string option
 
 type file = 
-  | TopDefProc of string * (string list * mode option * string list ) list * declaration list * instruction list * string option
+  | TopDefProc of string * (string list * mode option * string list) list * declaration list * instruction list * string option
   | TopDefFun of string * (string list * mode option * string list) list * string list * declaration list * instruction list * string option

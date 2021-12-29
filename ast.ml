@@ -59,7 +59,7 @@ type choice =
 type instruction_ = 
   | Null
   | Ass of string list * expression
-  | Proc of string list  * expression list
+  | Proc of string list * expression list
   | Loop of string option * (string list * instruction_) list
   | While of string option * expression * (string list * instruction_) list
   | For of string option * string * bool * iter * (string list * instruction_) list 

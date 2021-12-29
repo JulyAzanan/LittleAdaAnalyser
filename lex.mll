@@ -1,9 +1,20 @@
 {
     open Parser;;
+    open String;;
+    open Char;;
+    open Seq;;
 
     (*Fonction de conversion de string -> int*)
-    let parse_int s = 0;;
-    let parse_sign s = true;;
+    let parse_int s =
+        Seq.fold_left (
+            fun acc c -> match c with
+                | '_' -> acc
+                | n -> acc * 10 + (Char.code n - 48) 
+        ) 0 (String.to_seq s)
+
+    let parse_sign s =
+        try String.get s 0 = '+' with Invalid_argument _ -> true;;
+
     let normalize = String.lowercase_ascii;;
 }
 let whitespace = [' ''\t''\r''\n']+

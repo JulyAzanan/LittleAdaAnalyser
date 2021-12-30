@@ -1,7 +1,38 @@
 %{
     open Ast;;
 
-    (* TODO *)
+    let explicit_op_pow e1 e2 e =
+        match (e1, e2) with
+            | Parent(_), _ | _, Parent(_)
+            | Const(_), _ | BaseConst(_), _
+            | Id(_), _ | QualId(_), _ -> e
+            | _ -> failwith "nique mooc"
+    
+    let explicit_op_compare e1 e2 e =
+        match (e1, e2) with
+            | Parent(_), _ | _, Parent(_)
+            | Const(_), _ | BaseConst(_), _
+            | Id(_), _ | QualId(_), _ 
+            | Minus(_), _ | Plus(_), _
+            | Mult(_), _ | Div(_), _
+            | Mod(_), _ | Rem(_), _
+            | Pow(_), _ | Not(_), _ | Abs(_), _ -> e
+            | _ -> failwith "nique mooc"
+    
+    let explicit_op_bool e1 e2 e =
+        match (e1, e2) with
+            | Parent(_), _ | _, Parent(_)
+            | Const(_), _ | BaseConst(_), _
+            | Id(_), _ | QualId(_), _ 
+            | Minus(_), _ | Plus(_), _
+            | Mult(_), _ | Div(_), _
+            | Mod(_), _ | Rem(_), _
+            | Pow(_), _ | Not(_), _ | Abs(_), _
+            | Equal(_), _ | NEqual(_), _
+            | LessT(_), _ | GreaterT(_), _
+            | Less(_), _ | Greater(_), _ -> e
+            | _ -> failwith "nique mooc"
+
 %}
 %token MINUS PLUS ABS NOT MULT DIV POW EQUAL
 %token N_EQUAL LESS_T GREATER_T LESS GREATER MOD
@@ -12,7 +43,7 @@
 %token ARROW OTHERS END_CASE PIPE GOTO EXIT RETURN
 %token RANGE CONSTANT TYPE IS_RANGE SUBTYPE RENAMES
 %token PROCEDURE IN OUT IN_OUT FUNCTION BEGIN END
-%token DOT
+%token DOT EOF
 %token <int> Int
 %token <int*int> Float
 %token <int*bool*int> IntExp
@@ -36,7 +67,7 @@
 %start s
 %type<Ast.file> s
 %%
-s: top_def {$1}
+s: top_def EOF {$1}
 ;
 e: Int {Const(Int($1))}
     | Float {let (a,b) = $1 in Const(Float(a, b))}
@@ -57,20 +88,20 @@ e: Int {Const(Int($1))}
     | e PLUS e {Plus($1, $3)}
     | e MULT e {Mult($1, $3)}
     | e DIV e {Div($1, $3)}
-    | e POW e {Pow($1, $3)}
-    | e EQUAL e {Equal($1, $3)}
-    | e N_EQUAL e {NEqual($1, $3)}
-    | e LESS_T e {LessT($1, $3)}
-    | e GREATER_T e {GreaterT($1, $3)}
-    | e LESS e {Less($1, $3)}
-    | e GREATER e {Greater($1, $3)}
+    | e POW e {explicit_op_pow $1 $3 (Pow($1, $3))}
+    | e EQUAL e {match $1 with Equal(_) -> Equal($1, $3) | _ -> explicit_op_compare $1 $3 (Equal($1, $3))}
+    | e N_EQUAL e {match $1 with NEqual(_) -> NEqual($1, $3) | _ -> explicit_op_compare $1 $3 (NEqual($1, $3))}
+    | e LESS_T e {match $1 with LessT(_) -> LessT($1, $3) | _ -> explicit_op_compare $1 $3 (LessT($1, $3))}
+    | e GREATER_T e {match $1 with GreaterT(_) -> GreaterT($1, $3) | _ -> explicit_op_compare $1 $3 (GreaterT($1, $3))}
+    | e LESS e {match $1 with Less(_) -> Less($1, $3) | _ -> explicit_op_compare $1 $3 (Less($1, $3))}
+    | e GREATER e {match $1 with Greater(_) -> Greater($1, $3) | _ -> explicit_op_compare $1 $3 (Greater($1, $3))}
     | e MOD e {Mod($1, $3)}
     | e REM e {Rem($1, $3)}
-    | e AND e {And($1, $3)}
-    | e OR e {Or($1, $3)}
-    | e XOR e {Xor($1, $3)}
-    | e AND_THEN e {AndThen($1, $3)}
-    | e OR_ELSE e {OrElse($1, $3)}
+    | e AND e {match $1 with And(_) -> And($1, $3) | _ -> explicit_op_bool $1 $3 (And($1, $3))}
+    | e OR e {match $1 with Or(_) -> Or($1, $3) | _ -> explicit_op_bool $1 $3 (Or($1, $3))}
+    | e XOR e {match $1 with Xor(_) -> Xor($1, $3) | _ -> explicit_op_bool $1 $3 (Xor($1, $3))}
+    | e AND_THEN e {match $1 with AndThen(_) -> AndThen($1, $3) | _ -> explicit_op_bool $1 $3 (AndThen($1, $3))}
+    | e OR_ELSE e {match $1 with OrElse(_) -> OrElse($1, $3) | _ -> explicit_op_bool $1 $3 (OrElse($1, $3))}
     | L_PAR e R_PAR {Parent($2)}
     | qual_id L_PAR e_sep R_PAR {Fun($1, $3)}
 ;

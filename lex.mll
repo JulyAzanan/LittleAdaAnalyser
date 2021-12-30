@@ -27,6 +27,7 @@ let hex = ['0'-'9''a'-'f''A'-'F']
 let sign = ['+''-']?
 let id = ['a'-'z''A'-'Z']('_'?['a'-'z''A'-'Z''0'-'9'])*
 rule decoupe = parse
+    | eof {EOF}
     | whitespace {decoupe lexbuf}
     | "--"[^'\n']*'\n' {decoupe lexbuf}
     (* | '\n'|"\r\n" {EOL} *)

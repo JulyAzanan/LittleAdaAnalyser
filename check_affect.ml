@@ -36,10 +36,6 @@ let rec check_instr_affect set (_, i) = match i with
 
 let rec get_declaration set d = match d with
   | Obj(vars, true, _, _) -> add set vars
-  | Renames(vars, _, id) ->
-    if IdSet.mem (join id) set
-    then add set vars
-    else set
   | DefProc(_, params, defs, instrs, _)
   | DefFun(_, params, _, defs, instrs, _) ->
     let set = List.fold_left get_param set params
@@ -52,6 +48,6 @@ let check_file_affect set f = match f with
   | TopDefFun(_, params, _, defs, instrs, _) ->
     let set = List.fold_left get_param set params
     in let set = List.fold_left get_declaration set defs
-    in List.iter (check_instr_affect set) instrs; set
+    in List.iter (check_instr_affect set) instrs
 
-let check_affect a = ignore(check_file_affect IdSet.empty a)
+let check_affect a = check_file_affect IdSet.empty a

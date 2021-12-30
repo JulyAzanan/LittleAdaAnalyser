@@ -9,6 +9,8 @@ all:
 	ocamlc -o test_print_consts parser.cmo lex.cmo print_consts.cmo test_print_consts.ml
 	ocamlc -c check_affect.ml
 	ocamlc -o test_check_affect parser.cmo lex.cmo check_affect.cmo test_check_affect.ml
+	ocamlc -c check_scope.ml
+	ocamlc -o test_check_scope parser.cmo lex.cmo check_scope.cmo test_check_scope.ml
 
 test_ok:
 	for file in ./projet_little_Ada/OK/*; do echo "$$file"; cat "$$file" | ./test; done
@@ -18,3 +20,6 @@ test_ko:
 
 test_affect:
 	for file in ./projet_little_Ada/KO/AffMode.ada ./projet_little_Ada/KO/AffIn.ada ./projet_little_Ada/KO/AffConst.ada ./projet_little_Ada/OK/*; do echo "$$file"; cat "$$file" | ./test_check_affect; done
+
+clear:
+	rm *.cmo *.cmi

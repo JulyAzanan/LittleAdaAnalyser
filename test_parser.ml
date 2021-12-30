@@ -1,4 +1,4 @@
-open Ast;;
+open Ast
 
 let lexbuf = Lexing.from_channel stdin
 

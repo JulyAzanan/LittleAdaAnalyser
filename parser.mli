@@ -64,6 +64,7 @@ type token =
   | END
   | DOT
   | EOF
+  | EOL
   | Int of (int)
   | Float of (int*int)
   | IntExp of (int*bool*int)

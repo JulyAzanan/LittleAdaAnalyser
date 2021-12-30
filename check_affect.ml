@@ -2,6 +2,8 @@ open Ast
 
 module IdSet = Set.Make(String)
 
+exception ConstantAffectation of string
+
 let add = List.fold_left
     (fun acc id -> IdSet.add id acc)
 
@@ -16,7 +18,7 @@ let rec check_instr_affect set (_, i) = match i with
   | Ass(id, _) ->
     let id' = join id
     in if IdSet.mem id' set
-    then failwith ("Ton père la constante " ^ id')
+    then raise (ConstantAffectation id')
     else ()
   | Loop(_, i_list)
   | While(_, _, i_list)

@@ -1,5 +1,8 @@
 open Ast
 
+exception OutOfRadix of char
+exception OutOfBase of int * int
+
 let sign s = if s then 1. else -1.
 
 let parse_char c = match c with
@@ -19,7 +22,7 @@ let parse_char c = match c with
   | 'd' | 'D' -> 13
   | 'e' | 'E' -> 14
   | 'f' | 'F' -> 15
-  | _ -> failwith "ta mère en slip"
+  | _ -> raise (OutOfRadix c)
 let parse_int s base =
   Seq.fold_left (
     fun acc c -> match c with
@@ -27,7 +30,7 @@ let parse_int s base =
       | n ->
         let m = parse_char n
         in if m > base
-        then failwith "mauvaise base de ta mère"
+        then raise (OutOfBase (base, m))
         else acc * base +  m
   ) 0 (String.to_seq s)
 

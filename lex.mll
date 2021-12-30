@@ -20,7 +20,7 @@
         in let s = String.concat "" split 
         in String.lowercase_ascii s
 }
-let whitespace = [' ''\t''\r''\n']+
+let whitespace = [' ''\t''\r']+
 let int = ['0'-'9']('_'?['0'-'9'])*
 let base = ['2'-'9']|'1''_'?['0'-'6']
 let hex = ['0'-'9''a'-'f''A'-'F']
@@ -28,9 +28,9 @@ let sign = ['+''-']?
 let id = ['a'-'z''A'-'Z']('_'?['a'-'z''A'-'Z''0'-'9'])*
 rule decoupe = parse
     | eof {EOF}
+    | '\n' {Lexing.new_line lexbuf; decoupe lexbuf}
     | whitespace {decoupe lexbuf}
     | "--"[^'\n']*'\n' {decoupe lexbuf}
-    (* | '\n'|"\r\n" {EOL} *)
     | "abs"|"ABS" {ABS}
     | "not"|"NOT" {NOT}
     | '-' {MINUS}

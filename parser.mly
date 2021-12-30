@@ -1,12 +1,17 @@
 %{
-    open Ast;;
+    open Ast
+
+    let check_distinct_ids i1 i2 e =
+        if i1 <> i2
+        then raise (DistinctIdentifiers (i2, i2))
+        else e
 
     let explicit_op_pow e1 e2 e =
         match (e1, e2) with
             | Parent(_), _ | _, Parent(_)
             | Const(_), _ | BaseConst(_), _
             | Id(_), _ | QualId(_), _ -> e
-            | _ -> failwith "nique mooc"
+            | _ -> raise (MixedOperators e)
     
     let explicit_op_compare e1 e2 e =
         match (e1, e2) with
@@ -17,7 +22,7 @@
             | Mult(_), _ | Div(_), _
             | Mod(_), _ | Rem(_), _
             | Pow(_), _ | Not(_), _ | Abs(_), _ -> e
-            | _ -> failwith "nique mooc"
+            | _ -> raise (MixedOperators e)
     
     let explicit_op_bool e1 e2 e =
         match (e1, e2) with
@@ -31,7 +36,7 @@
             | Equal(_), _ | NEqual(_), _
             | LessT(_), _ | GreaterT(_), _
             | Less(_), _ | Greater(_), _ -> e
-            | _ -> failwith "nique mooc"
+            | _ -> raise (MixedOperators e)
 
 %}
 %token MINUS PLUS ABS NOT MULT DIV POW EQUAL
@@ -43,7 +48,7 @@
 %token ARROW OTHERS END_CASE PIPE GOTO EXIT RETURN
 %token RANGE CONSTANT TYPE IS_RANGE SUBTYPE RENAMES
 %token PROCEDURE IN OUT IN_OUT FUNCTION BEGIN END
-%token DOT EOF
+%token DOT EOF EOL
 %token <int> Int
 %token <int*int> Float
 %token <int*bool*int> IntExp
@@ -123,22 +128,22 @@ i_: NULL SEMICOLON {Null}
     | qual_id L_PAR e_sep R_PAR SEMICOLON {Proc($1, $3)}
     | LOOP i_seq END_LOOP SEMICOLON {Loop(None, $2)}
     | Id COLON LOOP i_seq END_LOOP SEMICOLON {Loop(Some($1), $4)}
-    | Id COLON LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $6 then failwith "ID Loop pas pareil zbfuiyvzftezvy" else Loop(Some($1), $4)}
+    | Id COLON LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $6 then raise (DistinctIdentifiers ($1, $6)) else Loop(Some($1), $4)}
     | WHILE e LOOP i_seq END_LOOP SEMICOLON {While(None, $2, $4)}
     | Id COLON WHILE e LOOP i_seq END_LOOP SEMICOLON {While(Some($1), $4, $6)}
-    | Id COLON WHILE e LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $8 then failwith "ID While pas pareil zbfuiyvzftezvy" else While(Some($1), $4, $6)}
+    | Id COLON WHILE e LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $8 then raise (DistinctIdentifiers ($1, $8)) else While(Some($1), $4, $6)}
     | FOR Id IN e SEQUENCE e LOOP i_seq END_LOOP SEMICOLON {For(None, $2, false, Seq($4, $6), $8)}
     | Id COLON FOR Id IN e SEQUENCE e LOOP i_seq END_LOOP SEMICOLON {For(Some($1), $4, false, Seq($6, $8), $10)}
-    | Id COLON FOR Id IN e SEQUENCE e LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $12 then failwith "ta mère" else For(Some($1), $4, false, Seq($6, $8), $10)}
+    | Id COLON FOR Id IN e SEQUENCE e LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $12 then raise (DistinctIdentifiers ($1, $12)) else For(Some($1), $4, false, Seq($6, $8), $10)}
     | FOR Id IN REVERSE e SEQUENCE e LOOP i_seq END_LOOP SEMICOLON {For(None, $2, true, Seq($5, $7), $9)}
     | Id COLON FOR Id IN REVERSE e SEQUENCE e LOOP i_seq END_LOOP SEMICOLON {For(Some($1), $4, true, Seq($7, $9), $11)}
-    | Id COLON FOR Id IN REVERSE e SEQUENCE e LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $13 then failwith "ta mère" else For(Some($1), $4, true, Seq($7, $9), $11)}
+    | Id COLON FOR Id IN REVERSE e SEQUENCE e LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $13 then raise (DistinctIdentifiers ($1, $13)) else For(Some($1), $4, true, Seq($7, $9), $11)}
     | FOR Id IN t LOOP i_seq END_LOOP SEMICOLON {For(None, $2, false, Type($4), $6)}
     | Id COLON FOR Id IN t LOOP i_seq END_LOOP SEMICOLON {For(Some($1), $4, false, Type($6), $8)}
-    | Id COLON FOR Id IN t LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $10 then failwith "ta mère" else For(Some($1), $4, false, Type($6), $8)}
+    | Id COLON FOR Id IN t LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $10 then raise (DistinctIdentifiers ($1, $10)) else For(Some($1), $4, false, Type($6), $8)}
     | FOR Id IN REVERSE t LOOP i_seq END_LOOP SEMICOLON {For(None, $2, true, Type($5), $7)}
     | Id COLON FOR Id IN REVERSE t LOOP i_seq END_LOOP SEMICOLON {For(Some($1), $4, true, Type($7), $9)}
-    | Id COLON FOR Id IN REVERSE t LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $11 then failwith "ta mère" else For(Some($1), $4, true, Type($7), $9)}
+    | Id COLON FOR Id IN REVERSE t LOOP i_seq END_LOOP Id SEMICOLON {if $1 <> $11 then raise (DistinctIdentifiers ($1, $11)) else For(Some($1), $4, true, Type($7), $9)}
     | IF e THEN i_seq END_IF SEMICOLON {If($2, $4, [], [])}
     | IF e THEN i_seq ELSE i_seq END_IF SEMICOLON {If($2, $4, [], $6)}
     | IF e THEN i_seq else_if END_IF SEMICOLON {If($2, $4, $5, [])}
@@ -194,14 +199,14 @@ d: id_sep COLON SEMICOLON {Obj($1, false, None, None)}
     | PROCEDURE Id L_PAR param_seq R_PAR IS d_seq BEGIN i_seq END SEMICOLON {DefProc($2, $4, $7, $9, None)}
     | FUNCTION Id RETURN qual_id IS d_seq BEGIN i_seq END SEMICOLON {DefFun($2, [], $4, $6, $8, None)}
     | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS d_seq BEGIN i_seq END SEMICOLON {DefFun($2, $4, $7, $9, $11, None)}
-    | PROCEDURE Id IS BEGIN i_seq END Id SEMICOLON {if $2 <> $7 then failwith "ta mère" else DefProc($2, [], [], $5, Some($7))}
-    | PROCEDURE Id L_PAR param_seq R_PAR IS BEGIN i_seq END Id SEMICOLON {if $2 <> $10 then failwith "ta mère" else DefProc($2, $4, [], $8, Some($10))}
-    | FUNCTION Id RETURN qual_id IS BEGIN i_seq END Id SEMICOLON {if $2 <> $9 then failwith "ta mère" else DefFun($2, [], $4, [], $7, Some($9))}
-    | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS BEGIN i_seq END Id SEMICOLON {if $2 <> $12 then failwith "ta mère" else DefFun($2, $4, $7, [], $10, Some($12))}
-    | PROCEDURE Id IS d_seq BEGIN i_seq END Id SEMICOLON {if $2 <> $8 then failwith "ta mère" else DefProc($2, [], $4, $6, Some($8))}
-    | PROCEDURE Id L_PAR param_seq R_PAR IS d_seq BEGIN i_seq END Id SEMICOLON {if $2 <> $11 then failwith "ta mère" else DefProc($2, $4, $7, $9, Some($11))}
-    | FUNCTION Id RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {if $2 <> $10 then failwith "ta mère" else DefFun($2, [], $4, $6, $8, Some($10))}
-    | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {if $2 <> $13 then failwith "ta mère" else DefFun($2, $4, $7, $9, $11, Some($13))}
+    | PROCEDURE Id IS BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $7 (DefProc($2, [], [], $5, Some($7)))}
+    | PROCEDURE Id L_PAR param_seq R_PAR IS BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $10 (DefProc($2, $4, [], $8, Some($10)))}
+    | FUNCTION Id RETURN qual_id IS BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $9 (DefFun($2, [], $4, [], $7, Some($9)))}
+    | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $12 (DefFun($2, $4, $7, [], $10, Some($12)))}
+    | PROCEDURE Id IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $8 (DefProc($2, [], $4, $6, Some($8)))}
+    | PROCEDURE Id L_PAR param_seq R_PAR IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $11 (DefProc($2, $4, $7, $9, Some($11)))}
+    | FUNCTION Id RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $10 (DefFun($2, [], $4, $6, $8, Some($10)))}
+    | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $13 (DefFun($2, $4, $7, $9, $11, Some($13)))}
 ;  
 top_def: PROCEDURE Id IS BEGIN i_seq END SEMICOLON {TopDefProc($2, [], [], $5, None)}
     | PROCEDURE Id L_PAR param_seq R_PAR IS BEGIN i_seq END SEMICOLON {TopDefProc($2, $4, [], $8, None)}
@@ -211,14 +216,14 @@ top_def: PROCEDURE Id IS BEGIN i_seq END SEMICOLON {TopDefProc($2, [], [], $5, N
     | PROCEDURE Id L_PAR param_seq R_PAR IS d_seq BEGIN i_seq END SEMICOLON {TopDefProc($2, $4, $7, $9, None)}
     | FUNCTION Id RETURN qual_id IS d_seq BEGIN i_seq END SEMICOLON {TopDefFun($2, [], $4, $6, $8, None)}
     | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS d_seq BEGIN i_seq END SEMICOLON {TopDefFun($2, $4, $7, $9, $11, None)}
-    | PROCEDURE Id IS BEGIN i_seq END Id SEMICOLON {if $2 <> $7 then failwith "ta mère" else TopDefProc($2, [], [], $5, Some($7))}
-    | PROCEDURE Id L_PAR param_seq R_PAR IS BEGIN i_seq END Id SEMICOLON {if $2 <> $10 then failwith "ta mère" else TopDefProc($2, $4, [], $8, Some($10))}
-    | FUNCTION Id RETURN qual_id IS BEGIN i_seq END Id SEMICOLON {if $2 <> $9 then failwith "ta mère" else TopDefFun($2, [], $4, [], $7, Some($9))}
-    | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS BEGIN i_seq END Id SEMICOLON {if $2 <> $12 then failwith "ta mère" else TopDefFun($2, $4, $7, [], $10, Some($12))}
-    | PROCEDURE Id IS d_seq BEGIN i_seq END Id SEMICOLON {if $2 <> $8 then failwith "ta mère" else TopDefProc($2, [], $4, $6, Some($8))}
-    | PROCEDURE Id L_PAR param_seq R_PAR IS d_seq BEGIN i_seq END Id SEMICOLON {if $2 <> $11 then failwith "ta mère" else TopDefProc($2, $4, $7, $9, Some($11))}
-    | FUNCTION Id RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {if $2 <> $10 then failwith "ta mère" else TopDefFun($2, [], $4, $6, $8, Some($10))}
-    | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {if $2 <> $13 then failwith "ta mère" else TopDefFun($2, $4, $7, $9, $11, Some($13))}
+    | PROCEDURE Id IS BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $7 (TopDefProc($2, [], [], $5, Some($7)))}
+    | PROCEDURE Id L_PAR param_seq R_PAR IS BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $10 (TopDefProc($2, $4, [], $8, Some($10)))}
+    | FUNCTION Id RETURN qual_id IS BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $9 (TopDefFun($2, [], $4, [], $7, Some($9)))}
+    | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $12 (TopDefFun($2, $4, $7, [], $10, Some($12)))}
+    | PROCEDURE Id IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $8 (TopDefProc($2, [], $4, $6, Some($8)))}
+    | PROCEDURE Id L_PAR param_seq R_PAR IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $11 (TopDefProc($2, $4, $7, $9, Some($11)))}
+    | FUNCTION Id RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $10 (TopDefFun($2, [], $4, $6, $8, Some($10)))}
+    | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $13 (TopDefFun($2, $4, $7, $9, $11, Some($13)))}
 ;
 id_sep: Id COMMA id_sep {$1::$3}
     |Id {[$1]}

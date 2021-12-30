@@ -2,12 +2,12 @@ open Ast
 
 module IdSet = Set.Make(String)
 
+exception LabelRedefinition of string
+exception UndefinedIdentifier of string
+
 let join = String.concat "."
 
-let add e set =
-  if IdSet.mem e set
-  then print_string ("Ton oncle redéfinition de " ^ e ^ "\n");
-  IdSet.add e set
+let add = IdSet.add 
 
 let add_list l set = List.fold_left
     (fun acc id -> add id acc) set l
@@ -15,13 +15,13 @@ let add_list l set = List.fold_left
 let add_list_inspect l set = List.fold_left (
     fun acc id ->
       if IdSet.mem id set
-      then failwith ("tes grands morts la redéfinition de label : " ^ id)
+      then raise (LabelRedefinition id)
       else add id acc
   ) set l
 
 let inspect s set =
   if not (IdSet.mem s set)
-  then failwith ("ta soeur le scope bordel : " ^ s)
+  then raise (UndefinedIdentifier s)
 
 let inspect_list l set =
   List.iter (fun e -> inspect e set) l

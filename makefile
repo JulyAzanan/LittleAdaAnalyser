@@ -11,6 +11,7 @@ all:
 	ocamlc -o test_check_affect parser.cmo lex.cmo check_affect.cmo test_check_affect.ml
 	ocamlc -c check_scope.ml
 	ocamlc -o test_check_scope parser.cmo lex.cmo check_scope.cmo test_check_scope.ml
+	ocamlc -o main parser.cmo lex.cmo print_consts.cmo check_affect.cmo check_scope.cmo main.ml
 
 test_ok:
 	for file in ./projet_little_Ada/OK/*; do echo "$$file"; cat "$$file" | ./test; done
@@ -24,5 +25,10 @@ test_affect:
 test_scope:
 	for file in ./projet_little_Ada/KO/ScopeError.ada ./projet_little_Ada/KO/ScopeError2.ada ./projet_little_Ada/KO/ScopeError3.ada ./projet_little_Ada/KO/ScopeError4.ada ./projet_little_Ada/KO/ScopeGoto.ada ./projet_little_Ada/KO/ScopeFunc.ada ./projet_little_Ada/KO/ScopeProc.ada ./projet_little_Ada/KO/UnknownVariable.ada ./projet_little_Ada/OK/*; do echo "$$file"; cat "$$file" | ./test_check_scope; done
 
+test:
+	for file in ./projet_little_Ada/OK/* ./projet_little_Ada/KO/*; do echo "\n\e[1m\e[32mFile: $$file\e[0m"; cat "$$file" | ./main; done
+
 clear:
 	rm *.cmo *.cmi
+
+.PHONY: test

@@ -1,3 +1,8 @@
 *.cmi
 *.cmo
 a.out
+
+test
+test_check_affect
+test_check_scope
+test_print_consts

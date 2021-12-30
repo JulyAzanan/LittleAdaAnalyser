@@ -61,7 +61,7 @@ rule decoupe = parse
     | ":=" {ASS}
     | "null"|"NULL" {NULL}
     | "loop"|"LOOP" {LOOP}
-    | "end"whitespace"loop"|"END"whitespace"LOOP" {END_LOOP} (* factoriser end ? *)
+    | "end"whitespace"loop"|"END"whitespace"LOOP" {END_LOOP}
     | "while"|"WHILE" {WHILE}
     | "for"|"FOR" {FOR}
     | "in"|"IN" {IN}

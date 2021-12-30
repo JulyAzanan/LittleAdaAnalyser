@@ -1,9 +1,9 @@
 # 1 "lex.mll"
  
-    open Parser;;
-    open String;;
-    open Char;;
-    open Seq;;
+    open Parser
+    open String
+    open Char
+    open Seq
 
     (*Fonction de conversion de string -> int*)
     let parse_int s =
@@ -14,11 +14,14 @@
         ) 0 (String.to_seq s)
 
     let parse_sign s =
-        try String.get s 0 = '+' with Invalid_argument _ -> true;;
+        try String.get s 0 = '+' with Invalid_argument _ -> true
 
-    let normalize = String.lowercase_ascii;;
+    let normalize s =
+        let split = String.split_on_char '_' s
+        in let s = String.concat "" split 
+        in String.lowercase_ascii s
 
-# 22 "lex.ml"
+# 25 "lex.ml"
 let __ocaml_lex_tables = {
   Lexing.lex_base =
    "\000\000\001\000\077\000\154\000\176\000\212\000\249\000\068\001\
@@ -5115,527 +5118,527 @@ let rec decoupe lexbuf =
 and __ocaml_lex_decoupe_rec lexbuf __ocaml_lex_state =
   match Lexing.new_engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 27 "lex.mll"
+# 30 "lex.mll"
                  (decoupe lexbuf)
-# 5121 "lex.ml"
+# 5124 "lex.ml"
 
   | 1 ->
-# 28 "lex.mll"
+# 31 "lex.mll"
                        (decoupe lexbuf)
-# 5126 "lex.ml"
+# 5129 "lex.ml"
 
   | 2 ->
-# 30 "lex.mll"
+# 33 "lex.mll"
                   (ABS)
-# 5131 "lex.ml"
+# 5134 "lex.ml"
 
   | 3 ->
-# 31 "lex.mll"
+# 34 "lex.mll"
                   (NOT)
-# 5136 "lex.ml"
+# 5139 "lex.ml"
 
   | 4 ->
-# 32 "lex.mll"
+# 35 "lex.mll"
           (MINUS)
-# 5141 "lex.ml"
+# 5144 "lex.ml"
 
   | 5 ->
-# 33 "lex.mll"
+# 36 "lex.mll"
           (PLUS)
-# 5146 "lex.ml"
+# 5149 "lex.ml"
 
   | 6 ->
-# 34 "lex.mll"
+# 37 "lex.mll"
           (MULT)
-# 5151 "lex.ml"
+# 5154 "lex.ml"
 
   | 7 ->
-# 35 "lex.mll"
+# 38 "lex.mll"
           (DIV)
-# 5156 "lex.ml"
+# 5159 "lex.ml"
 
   | 8 ->
-# 36 "lex.mll"
+# 39 "lex.mll"
            (POW)
-# 5161 "lex.ml"
+# 5164 "lex.ml"
 
   | 9 ->
-# 37 "lex.mll"
+# 40 "lex.mll"
           (EQUAL)
-# 5166 "lex.ml"
+# 5169 "lex.ml"
 
   | 10 ->
-# 38 "lex.mll"
+# 41 "lex.mll"
            (N_EQUAL)
-# 5171 "lex.ml"
+# 5174 "lex.ml"
 
   | 11 ->
-# 39 "lex.mll"
+# 42 "lex.mll"
            (LESS_T)
-# 5176 "lex.ml"
+# 5179 "lex.ml"
 
   | 12 ->
-# 40 "lex.mll"
+# 43 "lex.mll"
            (GREATER_T)
-# 5181 "lex.ml"
+# 5184 "lex.ml"
 
   | 13 ->
-# 41 "lex.mll"
+# 44 "lex.mll"
           (LESS)
-# 5186 "lex.ml"
+# 5189 "lex.ml"
 
   | 14 ->
-# 42 "lex.mll"
+# 45 "lex.mll"
           (GREATER)
-# 5191 "lex.ml"
+# 5194 "lex.ml"
 
   | 15 ->
-# 43 "lex.mll"
+# 46 "lex.mll"
                   (MOD)
-# 5196 "lex.ml"
+# 5199 "lex.ml"
 
   | 16 ->
-# 44 "lex.mll"
+# 47 "lex.mll"
                   (REM)
-# 5201 "lex.ml"
+# 5204 "lex.ml"
 
   | 17 ->
-# 45 "lex.mll"
+# 48 "lex.mll"
                   (AND)
-# 5206 "lex.ml"
+# 5209 "lex.ml"
 
   | 18 ->
-# 46 "lex.mll"
+# 49 "lex.mll"
                 (OR)
-# 5211 "lex.ml"
+# 5214 "lex.ml"
 
   | 19 ->
-# 47 "lex.mll"
+# 50 "lex.mll"
                   (XOR)
-# 5216 "lex.ml"
+# 5219 "lex.ml"
 
   | 20 ->
-# 48 "lex.mll"
+# 51 "lex.mll"
                                        (AND_THEN)
-# 5221 "lex.ml"
+# 5224 "lex.ml"
 
   | 21 ->
-# 49 "lex.mll"
+# 52 "lex.mll"
                                      (OR_ELSE)
-# 5226 "lex.ml"
+# 5229 "lex.ml"
 
   | 22 ->
-# 50 "lex.mll"
+# 53 "lex.mll"
           (L_PAR)
-# 5231 "lex.ml"
+# 5234 "lex.ml"
 
   | 23 ->
-# 51 "lex.mll"
+# 54 "lex.mll"
           (R_PAR)
-# 5236 "lex.ml"
+# 5239 "lex.ml"
 
   | 24 ->
-# 52 "lex.mll"
+# 55 "lex.mll"
           (COMMA)
-# 5241 "lex.ml"
+# 5244 "lex.ml"
 
   | 25 ->
-# 53 "lex.mll"
+# 56 "lex.mll"
           (SEMICOLON)
-# 5246 "lex.ml"
+# 5249 "lex.ml"
 
   | 26 ->
-# 54 "lex.mll"
+# 57 "lex.mll"
           (COLON)
-# 5251 "lex.ml"
+# 5254 "lex.ml"
 
   | 27 ->
-# 55 "lex.mll"
+# 58 "lex.mll"
            (L_ID)
-# 5256 "lex.ml"
+# 5259 "lex.ml"
 
   | 28 ->
-# 56 "lex.mll"
+# 59 "lex.mll"
            (R_ID)
-# 5261 "lex.ml"
+# 5264 "lex.ml"
 
   | 29 ->
-# 57 "lex.mll"
+# 60 "lex.mll"
            (ASS)
-# 5266 "lex.ml"
+# 5269 "lex.ml"
 
   | 30 ->
-# 58 "lex.mll"
+# 61 "lex.mll"
                     (NULL)
-# 5271 "lex.ml"
+# 5274 "lex.ml"
 
   | 31 ->
-# 59 "lex.mll"
+# 62 "lex.mll"
                     (LOOP)
-# 5276 "lex.ml"
+# 5279 "lex.ml"
 
   | 32 ->
-# 60 "lex.mll"
+# 63 "lex.mll"
                                                   (END_LOOP)
-# 5281 "lex.ml"
+# 5284 "lex.ml"
 
   | 33 ->
-# 61 "lex.mll"
+# 64 "lex.mll"
                       (WHILE)
-# 5286 "lex.ml"
+# 5289 "lex.ml"
 
   | 34 ->
-# 62 "lex.mll"
+# 65 "lex.mll"
                   (FOR)
-# 5291 "lex.ml"
+# 5294 "lex.ml"
 
   | 35 ->
-# 63 "lex.mll"
+# 66 "lex.mll"
                 (IN)
-# 5296 "lex.ml"
+# 5299 "lex.ml"
 
   | 36 ->
-# 64 "lex.mll"
+# 67 "lex.mll"
            (SEQUENCE)
-# 5301 "lex.ml"
+# 5304 "lex.ml"
 
   | 37 ->
-# 65 "lex.mll"
+# 68 "lex.mll"
                           (REVERSE)
-# 5306 "lex.ml"
+# 5309 "lex.ml"
 
   | 38 ->
-# 66 "lex.mll"
+# 69 "lex.mll"
                 (IF)
-# 5311 "lex.ml"
+# 5314 "lex.ml"
 
   | 39 ->
-# 67 "lex.mll"
+# 70 "lex.mll"
                     (THEN)
-# 5316 "lex.ml"
+# 5319 "lex.ml"
 
   | 40 ->
-# 68 "lex.mll"
+# 71 "lex.mll"
                     (ELSE)
-# 5321 "lex.ml"
+# 5324 "lex.ml"
 
   | 41 ->
-# 69 "lex.mll"
+# 72 "lex.mll"
                       (ELSIF)
-# 5326 "lex.ml"
+# 5329 "lex.ml"
 
   | 42 ->
-# 70 "lex.mll"
+# 73 "lex.mll"
                                               (END_IF)
-# 5331 "lex.ml"
+# 5334 "lex.ml"
 
   | 43 ->
-# 71 "lex.mll"
+# 74 "lex.mll"
                     (CASE)
-# 5336 "lex.ml"
+# 5339 "lex.ml"
 
   | 44 ->
-# 72 "lex.mll"
+# 75 "lex.mll"
                 (IS)
-# 5341 "lex.ml"
+# 5344 "lex.ml"
 
   | 45 ->
-# 73 "lex.mll"
+# 76 "lex.mll"
                     (WHEN)
-# 5346 "lex.ml"
+# 5349 "lex.ml"
 
   | 46 ->
-# 74 "lex.mll"
+# 77 "lex.mll"
            (ARROW)
-# 5351 "lex.ml"
+# 5354 "lex.ml"
 
   | 47 ->
-# 75 "lex.mll"
+# 78 "lex.mll"
                         (OTHERS)
-# 5356 "lex.ml"
+# 5359 "lex.ml"
 
   | 48 ->
-# 76 "lex.mll"
+# 79 "lex.mll"
                                                   (END_CASE)
-# 5361 "lex.ml"
+# 5364 "lex.ml"
 
   | 49 ->
-# 77 "lex.mll"
+# 80 "lex.mll"
           (PIPE)
-# 5366 "lex.ml"
+# 5369 "lex.ml"
 
   | 50 ->
-# 78 "lex.mll"
+# 81 "lex.mll"
                     (GOTO)
-# 5371 "lex.ml"
+# 5374 "lex.ml"
 
   | 51 ->
-# 79 "lex.mll"
+# 82 "lex.mll"
                     (EXIT)
-# 5376 "lex.ml"
+# 5379 "lex.ml"
 
   | 52 ->
-# 80 "lex.mll"
+# 83 "lex.mll"
                         (RETURN)
-# 5381 "lex.ml"
+# 5384 "lex.ml"
 
   | 53 ->
-# 81 "lex.mll"
+# 84 "lex.mll"
                       (RANGE)
-# 5386 "lex.ml"
+# 5389 "lex.ml"
 
   | 54 ->
-# 82 "lex.mll"
+# 85 "lex.mll"
                             (CONSTANT)
-# 5391 "lex.ml"
+# 5394 "lex.ml"
 
   | 55 ->
-# 83 "lex.mll"
+# 86 "lex.mll"
                     (TYPE)
-# 5396 "lex.ml"
+# 5399 "lex.ml"
 
   | 56 ->
-# 84 "lex.mll"
+# 87 "lex.mll"
                                                   (IS_RANGE)
-# 5401 "lex.ml"
+# 5404 "lex.ml"
 
   | 57 ->
-# 85 "lex.mll"
+# 88 "lex.mll"
                           (SUBTYPE)
-# 5406 "lex.ml"
+# 5409 "lex.ml"
 
   | 58 ->
-# 86 "lex.mll"
+# 89 "lex.mll"
                           (RENAMES)
-# 5411 "lex.ml"
+# 5414 "lex.ml"
 
   | 59 ->
-# 87 "lex.mll"
+# 90 "lex.mll"
                               (PROCEDURE)
-# 5416 "lex.ml"
+# 5419 "lex.ml"
 
   | 60 ->
-# 88 "lex.mll"
+# 91 "lex.mll"
                 (IN)
-# 5421 "lex.ml"
+# 5424 "lex.ml"
 
   | 61 ->
-# 89 "lex.mll"
+# 92 "lex.mll"
                   (OUT)
-# 5426 "lex.ml"
+# 5429 "lex.ml"
 
   | 62 ->
-# 90 "lex.mll"
+# 93 "lex.mll"
                                               (IN_OUT)
-# 5431 "lex.ml"
+# 5434 "lex.ml"
 
   | 63 ->
-# 91 "lex.mll"
+# 94 "lex.mll"
                             (FUNCTION)
-# 5436 "lex.ml"
+# 5439 "lex.ml"
 
   | 64 ->
-# 92 "lex.mll"
+# 95 "lex.mll"
                       (BEGIN)
-# 5441 "lex.ml"
+# 5444 "lex.ml"
 
   | 65 ->
-# 93 "lex.mll"
+# 96 "lex.mll"
                   (END)
-# 5446 "lex.ml"
+# 5449 "lex.ml"
 
   | 66 ->
-# 94 "lex.mll"
+# 97 "lex.mll"
           (DOT)
-# 5451 "lex.ml"
+# 5454 "lex.ml"
 
   | 67 ->
 let
-# 95 "lex.mll"
+# 98 "lex.mll"
              n
-# 5457 "lex.ml"
+# 5460 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 95 "lex.mll"
+# 98 "lex.mll"
                (Int(parse_int n))
-# 5461 "lex.ml"
+# 5464 "lex.ml"
 
   | 68 ->
 let
-# 96 "lex.mll"
+# 99 "lex.mll"
               n
-# 5467 "lex.ml"
+# 5470 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_mem.(0)
 and
-# 96 "lex.mll"
+# 99 "lex.mll"
                            d
-# 5472 "lex.ml"
+# 5475 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(0) + 1) lexbuf.Lexing.lex_curr_pos in
-# 96 "lex.mll"
+# 99 "lex.mll"
                               (Float(parse_int n, parse_int d))
-# 5476 "lex.ml"
+# 5479 "lex.ml"
 
   | 69 ->
 let
-# 97 "lex.mll"
+# 100 "lex.mll"
               n
-# 5482 "lex.ml"
+# 5485 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_mem.(0)
 and
-# 97 "lex.mll"
+# 100 "lex.mll"
                                  s
-# 5487 "lex.ml"
+# 5490 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(0) + 1) lexbuf.Lexing.lex_mem.(1)
 and
-# 97 "lex.mll"
+# 100 "lex.mll"
                                            e
-# 5492 "lex.ml"
+# 5495 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(1) lexbuf.Lexing.lex_curr_pos in
-# 97 "lex.mll"
+# 100 "lex.mll"
                                               (IntExp(parse_int n, parse_sign s, parse_int e))
-# 5496 "lex.ml"
+# 5499 "lex.ml"
 
   | 70 ->
 let
-# 98 "lex.mll"
+# 101 "lex.mll"
               n
-# 5502 "lex.ml"
+# 5505 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_mem.(0)
 and
-# 98 "lex.mll"
+# 101 "lex.mll"
                            d
-# 5507 "lex.ml"
+# 5510 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(0) + 1) lexbuf.Lexing.lex_mem.(1)
 and
-# 98 "lex.mll"
+# 101 "lex.mll"
                                               s
-# 5512 "lex.ml"
+# 5515 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(1) + 1) lexbuf.Lexing.lex_mem.(2)
 and
-# 98 "lex.mll"
+# 101 "lex.mll"
                                                         e
-# 5517 "lex.ml"
+# 5520 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(2) lexbuf.Lexing.lex_curr_pos in
-# 98 "lex.mll"
+# 101 "lex.mll"
                                                            (FloatExp(parse_int n, parse_int d, parse_sign s, parse_int e))
-# 5521 "lex.ml"
+# 5524 "lex.ml"
 
   | 71 ->
 let
-# 99 "lex.mll"
+# 102 "lex.mll"
                b
-# 5527 "lex.ml"
+# 5530 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_mem.(0)
 and
-# 99 "lex.mll"
+# 102 "lex.mll"
                                       h
-# 5532 "lex.ml"
+# 5535 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(0) + 1) (lexbuf.Lexing.lex_curr_pos + -1) in
-# 99 "lex.mll"
+# 102 "lex.mll"
                                              (BaseInt(parse_int b, h))
-# 5536 "lex.ml"
+# 5539 "lex.ml"
 
   | 72 ->
 let
-# 100 "lex.mll"
+# 103 "lex.mll"
                b
-# 5542 "lex.ml"
+# 5545 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_mem.(0)
 and
-# 100 "lex.mll"
+# 103 "lex.mll"
                                       h
-# 5547 "lex.ml"
+# 5550 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(0) + 1) lexbuf.Lexing.lex_mem.(1)
 and
-# 100 "lex.mll"
+# 103 "lex.mll"
                                                              d
-# 5552 "lex.ml"
+# 5555 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(1) + 1) (lexbuf.Lexing.lex_curr_pos + -1) in
-# 100 "lex.mll"
+# 103 "lex.mll"
                                                                    (BaseFloat(parse_int b, h, d))
-# 5556 "lex.ml"
+# 5559 "lex.ml"
 
   | 73 ->
 let
-# 101 "lex.mll"
+# 104 "lex.mll"
                b
-# 5562 "lex.ml"
+# 5565 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_mem.(0)
 and
-# 101 "lex.mll"
+# 104 "lex.mll"
                                       h
-# 5567 "lex.ml"
+# 5570 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(0) + 1) lexbuf.Lexing.lex_mem.(1)
 and
-# 101 "lex.mll"
+# 104 "lex.mll"
                                                             s
-# 5572 "lex.ml"
+# 5575 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(1) + 2) lexbuf.Lexing.lex_mem.(2)
 and
-# 101 "lex.mll"
+# 104 "lex.mll"
                                                                       e
-# 5577 "lex.ml"
+# 5580 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(2) lexbuf.Lexing.lex_curr_pos in
-# 101 "lex.mll"
+# 104 "lex.mll"
                                                                          (BaseIntExp(parse_int b, h, parse_sign s, parse_int e))
-# 5581 "lex.ml"
+# 5584 "lex.ml"
 
   | 74 ->
 let
-# 102 "lex.mll"
+# 105 "lex.mll"
                b
-# 5587 "lex.ml"
+# 5590 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_mem.(0)
 and
-# 102 "lex.mll"
+# 105 "lex.mll"
                                       h
-# 5592 "lex.ml"
+# 5595 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(0) + 1) lexbuf.Lexing.lex_mem.(1)
 and
-# 102 "lex.mll"
+# 105 "lex.mll"
                                                              d
-# 5597 "lex.ml"
+# 5600 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(1) + 1) lexbuf.Lexing.lex_mem.(2)
 and
-# 102 "lex.mll"
+# 105 "lex.mll"
                                                                                    s
-# 5602 "lex.ml"
+# 5605 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_mem.(2) + 2) lexbuf.Lexing.lex_mem.(3)
 and
-# 102 "lex.mll"
+# 105 "lex.mll"
                                                                                              e
-# 5607 "lex.ml"
+# 5610 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(3) lexbuf.Lexing.lex_curr_pos in
-# 102 "lex.mll"
+# 105 "lex.mll"
                                                                                                 (BaseFloatExp(parse_int b, h, d, parse_sign s, parse_int e))
-# 5611 "lex.ml"
+# 5614 "lex.ml"
 
   | 75 ->
 let
-# 103 "lex.mll"
+# 106 "lex.mll"
             s
-# 5617 "lex.ml"
+# 5620 "lex.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 103 "lex.mll"
+# 106 "lex.mll"
               (Id(normalize s))
-# 5621 "lex.ml"
+# 5624 "lex.ml"
 
   | 76 ->
 let
-# 104 "lex.mll"
+# 107 "lex.mll"
                          s
-# 5627 "lex.ml"
+# 5630 "lex.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_start_pos + 1) (lexbuf.Lexing.lex_curr_pos + -1) in
-# 104 "lex.mll"
+# 107 "lex.mll"
                                (String(s))
-# 5631 "lex.ml"
+# 5634 "lex.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf;
       __ocaml_lex_decoupe_rec lexbuf __ocaml_lex_state
 
 ;;
 
-# 105 "lex.mll"
+# 108 "lex.mll"
  
 
 
-# 5642 "lex.ml"
+# 5645 "lex.ml"

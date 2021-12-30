@@ -1,8 +1,8 @@
 {
-    open Parser;;
-    open String;;
-    open Char;;
-    open Seq;;
+    open Parser
+    open String
+    open Char
+    open Seq
 
     (*Fonction de conversion de string -> int*)
     let parse_int s =
@@ -13,9 +13,12 @@
         ) 0 (String.to_seq s)
 
     let parse_sign s =
-        try String.get s 0 = '+' with Invalid_argument _ -> true;;
+        try String.get s 0 = '+' with Invalid_argument _ -> true
 
-    let normalize = String.lowercase_ascii;;
+    let normalize s =
+        let split = String.split_on_char '_' s
+        in let s = String.concat "" split 
+        in String.lowercase_ascii s
 }
 let whitespace = [' ''\t''\r''\n']+
 let int = ['0'-'9']('_'?['0'-'9'])*

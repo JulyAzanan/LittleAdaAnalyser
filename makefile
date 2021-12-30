@@ -21,5 +21,8 @@ test_ko:
 test_affect:
 	for file in ./projet_little_Ada/KO/AffMode.ada ./projet_little_Ada/KO/AffIn.ada ./projet_little_Ada/KO/AffConst.ada ./projet_little_Ada/OK/*; do echo "$$file"; cat "$$file" | ./test_check_affect; done
 
+test_scope:
+	for file in ./projet_little_Ada/KO/ScopeError.ada ./projet_little_Ada/KO/ScopeError2.ada ./projet_little_Ada/KO/ScopeError3.ada ./projet_little_Ada/KO/ScopeError4.ada ./projet_little_Ada/KO/ScopeGoto.ada ./projet_little_Ada/KO/ScopeFunc.ada ./projet_little_Ada/KO/ScopeProc.ada ./projet_little_Ada/KO/UnknownVariable.ada ./projet_little_Ada/OK/*; do echo "$$file"; cat "$$file" | ./test_check_scope; done
+
 clear:
 	rm *.cmo *.cmi

@@ -1,11 +1,21 @@
 %{
     open Ast
 
+    (**
+    @requires \nothing
+    @ensures \returns e if both IDs are the same
+    @raises DistinctIdentifiers (i1, i2) if they are not the same
+    *)
     let check_distinct_ids i1 i2 e =
         if i1 <> i2
-        then raise (DistinctIdentifiers (i2, i2))
+        then raise (DistinctIdentifiers (i1, i2))
         else e
 
+    (**
+    @requires \nothing
+    @ensures \returns e if e1 and e2 satisfy the conditions on the pow operator
+    @raises MixedOperators if it's not the case
+    *)
     let explicit_op_pow e1 e2 e =
         match (e1, e2) with
             | Parent(_), _ | _, Parent(_)
@@ -13,6 +23,11 @@
             | Id(_), _ | QualId(_), _ -> e
             | _ -> raise (MixedOperators e)
     
+    (**
+    @requires \nothing
+    @ensures \returns e if e1 and e2 satisfy the conditions on the compare operator
+    @raises MixedOperators if it's not the case
+    *)
     let explicit_op_compare e1 e2 e =
         match (e1, e2) with
             | Parent(_), _ | _, Parent(_)
@@ -24,6 +39,11 @@
             | Pow(_), _ | Not(_), _ | Abs(_), _ -> e
             | _ -> raise (MixedOperators e)
     
+    (**
+    @requires \nothing
+    @ensures \returns e if e1 and e2 satisfy the conditions on the boolean operator
+    @raises MixedOperators if it's not the case
+    *)
     let explicit_op_bool e1 e2 e =
         match (e1, e2) with
             | Parent(_), _ | _, Parent(_)
@@ -72,8 +92,10 @@
 %start s
 %type<Ast.file> s
 %%
+/* starting rule */
 s: top_def EOF {$1}
 ;
+/* rule for expressions */
 e: Int {Const(Int($1))}
     | Float {let (a,b) = $1 in Const(Float(a, b))}
     | IntExp {let (a, b, c) = $1 in Const(IntExp(a, b, c))}
@@ -110,18 +132,23 @@ e: Int {Const(Int($1))}
     | L_PAR e R_PAR {Parent($2)}
     | qual_id L_PAR e_sep R_PAR {Fun($1, $3)}
 ;
+/* rule to build strings */
 string: String string {$1 ^ "\"" ^ $2}
     | String {$1}
 ;
+/* rule to detect qualified ids */
 qual_id: Id DOT qual_id {$1::$3}
     | Id {[$1]}
 ;
+/* rule to detect a sequence of expressions */
 e_sep: e COMMA e_sep {$1::$3}
     | e {[$1]}
 ;
+/* rule to detect an instruction */
 i: L_ID Id R_ID i {let (a, b) = $4 in ($2::a, b)}
     | i_ {([],$1)}
 ;
+/* rule to detect the list of instructions_ defined after the label of an instruction */
 i_: NULL SEMICOLON {Null}
     | qual_id ASS e SEMICOLON {Ass($1, $3)}
     | qual_id SEMICOLON {Proc($1, [])}
@@ -157,25 +184,32 @@ i_: NULL SEMICOLON {Null}
     | RETURN SEMICOLON {ProcReturn}
     | RETURN e SEMICOLON {ProcFun($2)}
 ;
+/* rule to detect a sequence of instructions */
 i_seq: i i_seq {$1::$2}
     | i {[$1]}
 ;
+/* rule to detect a sequence of ELSIF block */
 else_if: ELSIF e THEN i_seq else_if {($2, $4)::$5}
     | ELSIF e THEN i_seq {[($2, $4)]}
 ;
+/* rule to detect a sequence of WHEN ... => ... block */
 when_seq: WHEN choix_seq ARROW i_seq when_seq {($2, $4)::$5}
     | WHEN choix_seq ARROW i_seq {[($2, $4)]}
 ;
+/* rule to detect a sequence of choices block */
 choix_seq: choix PIPE choix_seq {$1::$3}
     | choix {[$1]}
 ;
+/* rule to detect a choice */
 choix: e {Expression($1)}
     | e SEQUENCE e {Seq($1, $3)}
     | OTHERS {Others}
 ;
+/* rule to detect a type */
 t: Id {($1, None)}
     | Id RANGE e SEQUENCE e {($1, Some($3, $5))}
 ;
+/* rule to detect a declaration */
 d: id_sep COLON SEMICOLON {Obj($1, false, None, None)}
     | id_sep COLON CONSTANT SEMICOLON {Obj($1, true, None, None)}
     | id_sep COLON t SEMICOLON {Obj($1, false, Some($3), None)}
@@ -207,7 +241,8 @@ d: id_sep COLON SEMICOLON {Obj($1, false, None, None)}
     | PROCEDURE Id L_PAR param_seq R_PAR IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $11 (DefProc($2, $4, $7, $9, Some($11)))}
     | FUNCTION Id RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $10 (DefFun($2, [], $4, $6, $8, Some($10)))}
     | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $13 (DefFun($2, $4, $7, $9, $11, Some($13)))}
-;  
+; 
+/* rule to detect a top_level definition */
 top_def: PROCEDURE Id IS BEGIN i_seq END SEMICOLON {TopDefProc($2, [], [], $5, None)}
     | PROCEDURE Id L_PAR param_seq R_PAR IS BEGIN i_seq END SEMICOLON {TopDefProc($2, $4, [], $8, None)}
     | FUNCTION Id RETURN qual_id IS BEGIN i_seq END SEMICOLON {TopDefFun($2, [], $4, [], $7, None)}
@@ -225,20 +260,26 @@ top_def: PROCEDURE Id IS BEGIN i_seq END SEMICOLON {TopDefProc($2, [], [], $5, N
     | FUNCTION Id RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $10 (TopDefFun($2, [], $4, $6, $8, Some($10)))}
     | FUNCTION Id L_PAR param_seq R_PAR RETURN qual_id IS d_seq BEGIN i_seq END Id SEMICOLON {check_distinct_ids $2 $13 (TopDefFun($2, $4, $7, $9, $11, Some($13)))}
 ;
+/* rule to detect a sequence of ids */
 id_sep: Id COMMA id_sep {$1::$3}
     |Id {[$1]}
 ;
+/* rule to detect a definition */
 def: ASS e {$2}
 ;
+/* rule to detect a parameter */
 param: id_sep COLON qual_id {($1, None, $3)}
     | id_sep COLON mode qual_id {($1, Some($3), $4)}
 ;
+/* rule to detect a sequence of parameters */
 param_seq: param SEMICOLON param_seq {$1::$3}
     | param {[$1]}
 ;
+/* rule to detect a mode */
 mode: IN {In}
     | OUT {Out}
     | IN_OUT {InOut}
 ;
+/* rule to detect a sequence of declaration */
 d_seq: d d_seq {$1::$2}
     | d {[$1]}

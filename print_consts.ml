@@ -3,8 +3,17 @@ open Ast
 exception OutOfRadix of char
 exception OutOfBase of int * int
 
+(**
+@requires \nothing
+@ensures convert a bool to a sign (true = +1 and false = -1)
+*)
 let sign s = if s then 1. else -1.
 
+(**
+@requires \nothing
+@ensures convert a char (0-9 or a-f) to the corresponding int
+@raises OutOfRadix 
+*)
 let parse_char c = match c with
   | '0' -> 0
   | '1' -> 1
@@ -23,6 +32,12 @@ let parse_char c = match c with
   | 'e' | 'E' -> 14
   | 'f' | 'F' -> 15
   | _ -> raise (OutOfRadix c)
+
+(**
+@requires \nothing
+@ensures parse a string representing an int written in base base to the corresponding int
+@raises OutOfBase 
+*)
 let parse_int s base =
   Seq.fold_left (
     fun acc c -> match c with
@@ -34,23 +49,43 @@ let parse_int s base =
         else acc * base +  m
   ) 0 (String.to_seq s)
 
+(**
+@requires \nothing 
+@ensures convert a const Float(int, int) to a float
+*)
 let const_float_to_float i d =
   let dd = ceil (log10 (float_of_int d))
   in float_of_int i +. (float_of_int d /. (10. ** dd))
 
+(**
+@requires \nothing 
+@ensures convert a const IntExp(int, bool, int) to a float in the corresponding base
+*)
 let const_intexp_to_float i sgn e b = 
   float_of_int i *. (b ** ((sign sgn) *. float_of_int e))
 
+(**
+@requires \nothing 
+@ensures convert a const FloatExp(int, int, bool, int) to a float in the corresponding base
+*)
 let const_floatexp_to_float i d sgn e b =
   let dd = ceil (log10 (float_of_int d))
   in let x = float_of_int i +. (float_of_int d /. (10. ** dd)) in
   x *. (b ** ((sign sgn) *. float_of_int e))
 
+(**
+@requires \nothing 
+@ensures DFS of a tree on the root to reach the constants
+*)
 let rec print_consts a = match a with
   | TopDefProc(_, _, defs, instrs, _) | TopDefFun(_, _, _, defs, instrs, _) ->
     List.iter print_def_consts defs;
     List.iter print_instr_consts instrs
 
+(**
+@requires \nothing 
+@ensures DFS of tree on the declarations to reach the constants
+*)
 and print_def_consts d = match d with
   | Obj(_, _, Some(t), None) -> 
     print_type_consts t;
@@ -68,6 +103,10 @@ and print_def_consts d = match d with
     List.iter print_instr_consts i
   | _ -> ()
 
+(**
+@requires \nothing 
+@ensures DFS of a tree on the instructions to reach the constants
+*)
 and print_instr_consts (_, i) =  match i with
   | Ass(_, e) -> print_expr_consts e
   | Proc(_, e_list) -> List.iter print_expr_consts e_list
@@ -98,22 +137,41 @@ and print_instr_consts (_, i) =  match i with
   | ProcFun(e) -> print_expr_consts e
   | _ -> ()
 
+(**
+@requires \nothing 
+@ensures DFS of a tree on the iterators to reach the constants
+*)
 and print_iter_consts it = match it with
   | Seq(e1, e2) ->
     print_expr_consts e1;
     print_expr_consts e2;
   | Type(t) -> print_type_consts t
+
+(**
+@requires \nothing 
+@ensures DFS of a tree on the types to reach the constants
+*)
 and print_type_consts (_, ee) = match ee with
   | Some(e1, e2) -> 
     print_expr_consts e1;
     print_expr_consts e2;
   | _ -> ()
+
+(**
+@requires \nothing 
+@ensures DFS of a tree on the choices to reach the constants
+*)
 and print_choice_consts c = match c with
   |Expression(e) -> print_expr_consts e
   |  Seq(e1, e2) ->
     print_expr_consts e1;
     print_expr_consts e2;
   | Others -> ()
+
+(**
+@requires \nothing 
+@ensures DFS of a tree on the expressions to reach the constants
+*)
 and print_expr_consts e = match e with
   | String(s) ->
     print_string s;
@@ -146,6 +204,11 @@ and print_expr_consts e = match e with
     print_expr_consts e2
   | Fun(_, e_list) -> List.iter print_expr_consts e_list
   | _ -> ()
+
+(**
+@requires \nothing 
+@ensures prints the numeric constants after converting them
+*)
 and print_const c = 
   begin
     match c with
@@ -158,6 +221,11 @@ and print_const c =
       let y = const_floatexp_to_float i d sgn e 10. in print_float y
   end;  
   print_newline ()
+
+(**
+@requires \nothing 
+@ensures print the numeric constants in base after converting them
+*)
 and print_base_const c =
   begin
     match c with

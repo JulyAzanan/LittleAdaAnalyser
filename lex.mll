@@ -4,7 +4,10 @@
     open Char
     open Seq
 
-    (*Fonction de conversion de string -> int*)
+    (**
+    @requires \nothing
+    @ensures convert a string defining a int with '_' inside to the corresponding int
+    *)
     let parse_int s =
         Seq.fold_left (
             fun acc c -> match c with
@@ -12,9 +15,17 @@
                 | n -> acc * 10 + (Char.code n - 48) 
         ) 0 (String.to_seq s)
 
+    (**
+    @requires \nothing
+    @ensures convert the string "+" or "-" to a boolean (nothing is equivalent to true (+))
+    *)
     let parse_sign s =
         try String.get s 0 = '+' with Invalid_argument _ -> true
 
+    (**
+    @requires \nothing
+    @ensures convert a string defining an id with '_' inside to the corresponding id string
+    *)
     let normalize s =
         let split = String.split_on_char '_' s
         in let s = String.concat "" split 

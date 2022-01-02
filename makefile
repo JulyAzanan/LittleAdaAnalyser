@@ -31,4 +31,4 @@ test:
 clear:
 	rm *.cmo *.cmi
 
-.PHONY: test
+.PHONY: test test_affect test_scope test_ko test_ok
